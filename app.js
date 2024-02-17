@@ -38,7 +38,11 @@ list.addEventListener('click', function(event) {
     // If button is clicked on, remove it
     if (event.target.tagName === 'BUTTON') {
         let existingTodos = JSON.parse(localStorage.getItem("todos")) || [];
-        const updatedTodos = removeItemFromArray(existingTodos, event.target.parentElement.innerText)
+
+        // Since we added a span to differentiate between the todo and the button,
+        // we can use the previousSibling property to get the todo text without 'Remove'
+        const todoText = event.target.previousSibling.innerText
+        const updatedTodos = removeItemFromArray(existingTodos, todoText)
         localStorage.setItem("todos", JSON.stringify(updatedTodos));
         event.target.parentElement.remove()
     }
@@ -53,9 +57,7 @@ function removeItemFromArray(arr, todo) {
     let result = []
 
     for (let item of arr) {
-        // Why is it adding 'Remove' to the end of the todo string?
-        let addRemoveString = item + 'Remove'
-        if (addRemoveString !== todo) {
+        if (item !== todo){
             result.push(item)
         }
     }
@@ -66,13 +68,18 @@ function addMarkupToDOM(input){
     const newTodo = document.createElement('li')
     // Create element button
     const removeBtn = document.createElement('button')
+
+    // Creating a span element to differentiate between the todo itself and the button
+    const span = document.createElement('span')
     // .value retrieves the current value of an input field in a form
+
     // innerText sets the newTodo value
-    newTodo.innerText = input
+    span.innerText = input
     // Set innerText of button element to 'Remove'
     removeBtn.innerText = 'Remove'
     // Append list item to unordered list
     list.append(newTodo)
     // Append the element as the last child of an element, in other words, to the li element
-    newTodo.appendChild(removeBtn)
+    newTodo.append(span)
+    newTodo.append(removeBtn)
 }
